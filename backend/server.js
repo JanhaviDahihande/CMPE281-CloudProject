@@ -146,7 +146,7 @@ router.post("/putData", (req, res) => {
 
       newUser.email = email;
       newUser.name = name;
-      newUser.role = role;
+      newUser.role = 'user';
       newUser.password = newUser.generateHash(password);
       newUser.save((err, user) => {
         if (err) {
@@ -230,6 +230,7 @@ router.post("/putData", (req, res) => {
         return res.send({
           success: true,
           message: 'Valid sign in',
+          role: user.role,
           token: doc._id
         });
       });
