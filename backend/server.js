@@ -232,7 +232,8 @@ router.post("/putData", (req, res) => {
           success: true,
           message: 'Valid sign in',
           role: user.role,
-          token: doc._id
+          token: doc._id,
+          user_id: userSession.userId
         });
       });
     });
@@ -248,6 +249,12 @@ router.post("/putData", (req, res) => {
     } = body;
     let {
       latlong
+    } = body;
+    let {
+      user_id
+    } = body;
+    let {
+      new_cluster
     } = body;
 
     if (!zip_code) {
@@ -269,6 +276,8 @@ router.post("/putData", (req, res) => {
      newRequest.zip_code = zip_code;
      newRequest.no_of_nodes = no_of_nodes;
      newRequest.latlong = latlong;
+     newRequest.user_id = user_id;
+     newRequest.new_cluster = new_cluster;
      newRequest.save((err, user) => {
        if (err) {
          return res.send({

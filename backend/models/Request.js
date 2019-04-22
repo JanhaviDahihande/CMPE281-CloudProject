@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const RequestSchema = new mongoose.Schema({
-  zip_code: {
+  user_id: {
     type: String,
     default: ''
   },
-  createdTime: {
+  zip_code: {
     type: String,
     default: ''
   },
@@ -13,10 +13,15 @@ const RequestSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  new_cluster: {
+    type: String,
+    default: ''
+  },
   latlong: {
     type: Array,
     default: []
   },
-});
+},
+{ timestamps: true },);
 
 module.exports = mongoose.model('Request', RequestSchema);
