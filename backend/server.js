@@ -8,6 +8,7 @@ const Data = require("./data");
 
 const User = require('./models/User');
 const UserSession = require('./models/UserSession');
+const Request = require('./models/Request');
 
 const API_PORT = 3002;
 const app = express();
@@ -235,6 +236,51 @@ router.post("/putData", (req, res) => {
         });
       });
     });
+  });
+
+  app.post('/api/request/newRequest', (req, res, next) => {
+    const { body } = req;
+    const {
+      zip_code
+    } = body;
+    let {
+      no_of_nodes
+    } = body;
+    let {
+      latlong
+    } = body;
+
+    if (!zip_code) {
+      return res.send({
+        success: false,
+        message: 'Error: Zip code cannot be blank.'
+      });
+    }
+    if (!no_of_nodes) {
+      return res.send({
+        success: false,
+        message: 'Error: No. of nodes cannot be 0.'
+      });
+    }
+
+     // Save the new request
+     const newRequest = new Request();
+
+     newRequest.zip_code = zip_code;
+     newRequest.no_of_nodes = no_of_nodes;
+     newRequest.latlong = latlong;
+     newRequest.save((err, user) => {
+       if (err) {
+         return res.send({
+           success: false,
+           message: 'Error: Server error'
+         });
+       }
+       return res.send({
+         success: true,
+         message: 'New Request added'
+       });
+     });
   });
 
 // append /api for our http requests
