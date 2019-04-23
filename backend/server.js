@@ -92,6 +92,7 @@ app.post("/api/account/signup", (req, res, next) => {
   const { password } = body;
   let { email } = body;
   const { name } = body;
+  const { lname } = body;
   const { confirm_password } = body;
   let { role } = body;
 
@@ -136,6 +137,7 @@ app.post("/api/account/signup", (req, res, next) => {
 
       newUser.email = email;
       newUser.name = name;
+      newUser.lname = lname;
       newUser.role = "user";
       newUser.password = newUser.generateHash(password);
       newUser.save((err, user) => {
