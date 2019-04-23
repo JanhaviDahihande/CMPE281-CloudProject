@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Request = require('./models/Request');
+const User= require('./models/User');
 const dbRoute = "mongodb+srv://dbUser:Qwerty@123@cluster0-auqrg.mongodb.net/mydb";
 
 // connects our back end code with the database
@@ -26,6 +27,13 @@ async function findRequestsForUser(user_id)
 async function findRequestsForAdmin()
 { 
     find_result= Request.find()
+    result= await find_result.exec();
+    return result;
+}
+
+async function findAllUsers()
+{ 
+    find_result= User.find()
     result= await find_result.exec();
     return result;
 }
