@@ -47,10 +47,11 @@ async function findAllUsers()
     return result;
 }
 
-async function updateRequests(user_id)
+async function updateRequests(request_id, status_code)
 { 
-    var query = {_id: user_id };
-    find_result= Request.updateMany(query, { $set: {status: "Approved" }})
+    var query = {_id: request_id };
+    var update_query ={ $set: {status: status_code }};
+    find_result= Request.updateMany(query, update_query);
     result= await find_result.exec();
     return result;
 }
@@ -58,7 +59,7 @@ async function updateRequests(user_id)
 
 async function testQueries()
 {
-    daa = await updateRequests('5cbe50f48f51ce3117d4311d');
+    daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     console.log(daa);
 }
 
