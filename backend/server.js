@@ -274,7 +274,52 @@ app.post("/api/request/newRequest", (req, res, next) => {
   });
 });
 
+// const sleep = milliseconds => {
+//   console.log("Sleep called");
+//   return new Promise(resolve => setTimeout(resolve, milliseconds));
+// };
+
+app.get("/api/myrequests/:id", (req, res, next) => {
+    let id = req.params.id;
+    console.log("id: "+id.toString());
+    var query = { user_id: id.toString()};
+    find_result= Request.find(query)
+    result= find_result.exec();
+    // sleep(10000).then(() => {
+    //   console.log(result);
+    //   return res.send({
+    //     success: true,
+    //     message: JSON.stringify(result)
+    //   });
+    // });
+    result.then(function(data){
+      console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
+    });
+    
+});
+
+app.get("/api/farmerrequests", (req, res, next) => {
+  
+  find_result= Request.find()
+  result= find_result.exec();
+  
+  result.then(function(data){
+    console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+  
+});
+
 // append /api for our http requests
+//change1
+// app.use("/api", router);
 app.use("/api", router);
 
 // launch our backend into a port
