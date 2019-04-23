@@ -8,7 +8,7 @@ function sleep (time) {
     return new Promise((resolve) => setTimeout(resolve, time));
   }
 
-var port = process.argv[2];
+var Iport = process.argv[2];
 var NodeArray = [4000,4001]
   
 function addNode()
@@ -81,4 +81,4 @@ http.createServer(function (req, res) {
   res.writeHead(200, {'Content-Type': 'application/json'});
   res.write(JSON.stringify("Not the data you're looking for..."));
   res.end();}
-}).listen(8008);
+}).listen(Iport);

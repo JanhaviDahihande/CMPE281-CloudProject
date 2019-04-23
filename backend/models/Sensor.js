@@ -35,10 +35,4 @@ const SensorSchema = new mongoose.Schema({
   }
 });
 
-NodeSchema.methods.generateHash = function(password) {
-  return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
-};
-NodeSchema.methods.validPassword = function(password) {
-  return bcrypt.compareSync(password, this.password);
-};
 module.exports = mongoose.model('Sensor', SensorSchema);

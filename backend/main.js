@@ -1,10 +1,10 @@
 const http = require('http');
 var request = require('sync-request');
-const Sensor = require('./Sensor');
+const Sensor = require('./models/Sensor');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-var port= "8008";
+var port= '8008';
 var cluster_id='1';
     
 const dbRoute = "mongodb+srv://dbUser:Qwerty@123@cluster0-auqrg.mongodb.net/mydb";
@@ -24,7 +24,7 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 function fetch(port)
 {
-    url= 'http://localhost:8008/getAllData'
+    url= 'http://localhost:'+port+'/getAllData'
     var res = request('GET', url);
     var result = JSON.parse(res.getBody());
     return result ;
@@ -33,7 +33,7 @@ function fetch(port)
 
 function getJsonData()
 {   
-    var jData= fetch();
+    var jData= fetch(port);
     for (var key in jData) {
         if (jData.hasOwnProperty(key)) {
           var newData= new Sensor();
