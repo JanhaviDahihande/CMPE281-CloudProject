@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const Request = require('./models/Request');
+const Request_new = require('./models/Request_new');
 const User= require('./models/User');
 const dbRoute = "mongodb+srv://dbUser:Qwerty@123@cluster0-auqrg.mongodb.net/mydb";
 
@@ -26,7 +27,15 @@ async function findRequestsForUser(user_id)
 
 async function findRequestsForAdmin()
 { 
-    find_result= Request.find()
+    find_result= Request_new.find().aggregate([
+        { $lookup:
+           {
+             from: 'users',
+             localField: '',
+             foreignField: '_id',
+             as: 'orderdetails'
+           }
+         }]);
     result= await find_result.exec();
     return result;
 }
@@ -38,9 +47,18 @@ async function findAllUsers()
     return result;
 }
 
+async function updateRequests(user_id)
+{ 
+    var query = {_id: user_id };
+    find_result= Request.updateMany(query, { $set: {status: "Approved" }})
+    result= await find_result.exec();
+    return result;
+}
+
+
 async function testQueries()
 {
-    daa = await findRequestsForAdmin();
+    daa = await updateRequests('5cbe50f48f51ce3117d4311d');
     console.log(daa);
 }
 
