@@ -34,12 +34,12 @@ async function findUserForRequests(user_id)
          from: 'users',
          localField: 'userId',
          foreignField: 'userId',
-         as: 'userdetails'
+         as: 'name'
        }
      },
-    {$unwind:'$userdetails'},
+    {$unwind:'$name'},
     {$project:{
-         userdetails:'$userdetails.name',
+         userdetails:'$name.name',
          requestId: 1, 
          newCluster: 1, 
          status: 1
