@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
+let AutoIncrement = require('mongoose-sequence')(mongoose);
 const bcrypt = require('bcrypt');
 const ClusterSchema = new mongoose.Schema({
-  cluster_id: {
-    type: String,
-    default: ''
-  },
   ipAddr: {
     type: String,
     default: ''
@@ -28,4 +25,5 @@ ClusterSchema.methods.generateHash = function(password) {
 ClusterSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
+ClusterSchema.plugin(AutoIncrement, {id:'cluster_id',inc_field: 'cluster_id'});
 module.exports = mongoose.model('Cluster', ClusterSchema);

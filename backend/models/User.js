@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+let AutoIncrement = require('mongoose-sequence')(mongoose);
 const bcrypt = require("bcrypt");
 const UserSchema = new mongoose.Schema({
   email: {
@@ -36,4 +37,5 @@ UserSchema.methods.generateHash = function(password) {
 UserSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
+UserSchema.plugin(AutoIncrement, {id:'user_id',inc_field: 'user_id'});
 module.exports = mongoose.model("User", UserSchema);

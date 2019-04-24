@@ -1,10 +1,7 @@
 let mongoose = require('mongoose');
+let AutoIncrement = require('mongoose-sequence')(mongoose);
 
 let farmerRequestSchema = mongoose.Schema({
-	requestId:{
-		type: Number,
-		required: true
-	},
 	userId:{
 		type: Number,
 		required: true
@@ -26,5 +23,5 @@ let farmerRequestSchema = mongoose.Schema({
 		required: true
 	}
 });
-
+farmerRequestSchema.plugin(AutoIncrement, {id:'requestId',inc_field: 'requestId'});
 let FarmerRequest = module.exports = mongoose.model('FarmerRequest',farmerRequestSchema);

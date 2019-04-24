@@ -1,10 +1,7 @@
 const mongoose = require('mongoose');
+let AutoIncrement = require('mongoose-sequence')(mongoose);
 const bcrypt = require('bcrypt');
 const NodeSchema = new mongoose.Schema({
-  node_id: {
-    type: String,
-    default: ''
-  },
   createdTime: {
     type: String,
     default: ''
@@ -29,4 +26,5 @@ NodeSchema.methods.generateHash = function(password) {
 NodeSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
+NodeSchema.plugin(AutoIncrement, {id:'node_id',inc_field: 'node_id'});
 module.exports = mongoose.model('Node', NodeSchema);
