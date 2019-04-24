@@ -382,7 +382,43 @@ app.post("/api/request/update", (req, res, next) => {
   let { status } = body;
 
   var query = { _id: req_id };
-  find_result = Request.updateOne(query, { $set: { status: status } });
+  find_result = Request.updateOne(query, { $set: { status: status } }, err => {
+    if (err) return res.json({ success: false, error: err });
+    return res.json({ success: true });
+  });
+  result = find_result.exec();
+  return result;
+});
+
+app.get("/api/manageinfrastruture/cluster/view", (req, res, next) => {
+  find_result= Cluster.find()
+  result= find_result.exec();
+  
+  result.then(function(data){
+    console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.put("/api/manageinfrastruture/cluster/update", (req, res, next) => {
+  
+  const { current_cluster_id, cluster_id, cluster_name } = req.body;
+  var query = { cluster_id: current_cluster_id };
+  find_result = Cluster.updateOne(query, { $set: { cluster_id: cluster_id, cluster_name: cluster_name },  });
+  result = find_result.exec();
+  return result;
+});
+
+app.delete("/api/manageinfrastruture/cluster/delete", (req, res, next) => {
+  const { cluster_id} = req.body;
+  var query = { cluster_id: cluster_id };
+  find_result = Cluster.deleteOne(query, err => {
+    if (err) return res.send(err);
+    return res.json({ success: true });
+  });
   result = find_result.exec();
   return result;
 });
