@@ -318,18 +318,16 @@ app.get("/api/farmerrequests", (req, res, next) => {
 });
 
 app.get("/api/users", (req, res, next) => {
-  
-  find_result= User.find()
-  result= find_result.exec();
-  
-  result.then(function(data){
+  find_result = User.find();
+  result = find_result.exec();
+
+  result.then(function(data) {
     console.log(data);
     return res.send({
       success: true,
       message: JSON.stringify(data)
     });
   });
-  
 });
 
 app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
@@ -358,7 +356,7 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
   }
 
   // Save the new request
-  const newCluster= new Cluster();
+  const newCluster = new Cluster();
 
   newCluster.areaCode = areaCode;
   newCluster.ipAddr = ipAddr;
@@ -376,6 +374,17 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
       message: "New Cluster added"
     });
   });
+});
+
+app.post("/api/request/update", (req, res, next) => {
+  const { body } = req;
+  const { req_id } = body;
+  let { status } = body;
+
+  var query = { _id: req_id };
+  find_result = Request.updateOne(query, { $set: { status: status } });
+  result = find_result.exec();
+  return result;
 });
 
 // append /api for our http requests
