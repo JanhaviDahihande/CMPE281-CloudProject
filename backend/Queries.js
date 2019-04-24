@@ -39,7 +39,7 @@ async function findUserForRequests(user_id)
      },
     {$unwind:'$name'},
     {$project:{
-         userdetails:'$name.name',
+         name:'$name.name',
          requestId: 1, 
          newCluster: 1, 
          status: 1
