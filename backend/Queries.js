@@ -25,6 +25,33 @@ async function findRequestsForUser(user_id)
     return result;
 }
 
+async function findUserForRequests(user_id)
+{
+    db.collection('farmerrequests').aggregate([
+        {$match : {userId : user_id}},
+    { $lookup:
+       {
+         from: 'users',
+         localField: 'userId',
+         foreignField: 'userId',
+         as: 'userdetails'
+       }
+     },
+    {$unwind:'$userdetails'},
+    {$project:{
+         userdetails:'$userdetails.name',
+         requestId: 1, 
+         newCluster: 1, 
+         status: 1
+         
+    }}
+    ]).toArray(function(err, res) {
+    if (err) throw err;
+    console.log(JSON.stringify(res));
+    return;});
+}
+
+
 async function findRequestsForAdmin()
 { 
     find_result= Request_new.find().aggregate([
