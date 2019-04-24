@@ -8,6 +8,7 @@ const Data = require("./data");
 const User = require("./models/User");
 const UserSession = require("./models/UserSession");
 const Request = require("./models/Request");
+const Cluster = require("./models/Cluster");
 
 const API_PORT = 3002;
 const app = express();
@@ -312,6 +313,67 @@ app.get("/api/farmerrequests", (req, res, next) => {
     return res.send({
       success: true,
       message: JSON.stringify(data)
+    });
+  });
+});
+
+app.get("/api/users", (req, res, next) => {
+  
+  find_result= User.find()
+  result= find_result.exec();
+  
+  result.then(function(data){
+    console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+  
+});
+
+app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
+  const { body } = req;
+  const { areaCode } = body;
+  let { ipAddr } = body;
+  let { cluster_name } = body;
+
+  if (!areaCode) {
+    return res.send({
+      success: false,
+      message: "Error: Area code cannot be blank."
+    });
+  }
+  if (!ipAddr) {
+    return res.send({
+      success: false,
+      message: "Error: IP address cannot be 0."
+    });
+  }
+  if (!cluster_name) {
+    return res.send({
+      success: false,
+      message: "Error: Cluster name cannot be blank."
+    });
+  }
+
+  // Save the new request
+  const newCluster= new Cluster();
+
+  newCluster.areaCode = areaCode;
+  newCluster.ipAddr = ipAddr;
+  newCluster.cluster_name = cluster_name;
+  newCluster.status = true;
+  newCluster.save((err, user) => {
+    if (err) {
+      return res.send({
+        success: false,
+        message: "Error: Server error"
+      });
+    }
+    return res.send({
+      success: true,
+      message: "New Cluster added"
     });
   });
 });

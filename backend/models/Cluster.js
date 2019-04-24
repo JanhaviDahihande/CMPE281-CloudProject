@@ -5,15 +5,15 @@ const ClusterSchema = new mongoose.Schema({
     type: String,
     default: ''
   },
-  createdTime: {
+  ipAddr: {
     type: String,
     default: ''
   },
-  ip_address: {
+  areaCode: {
     type: String,
     default: ''
   },
-  zipcode: {
+  cluster_name: {
     type: String,
     default: ''
   },
