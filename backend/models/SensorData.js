@@ -6,10 +6,7 @@ const SensorDataSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
-<<<<<<< Updated upstream
-=======
-  
->>>>>>> Stashed changes
+
   node_id: {
     type: String,
     default: ""
