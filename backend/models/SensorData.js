@@ -6,6 +6,10 @@ const SensorDataSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
+<<<<<<< Updated upstream
+=======
+  
+>>>>>>> Stashed changes
   node_id: {
     type: String,
     default: ""
@@ -22,15 +26,11 @@ const SensorDataSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
-  last_online: {
-    type: String,
-    default: ""
-  },
+ 
   status: {
     type: Boolean,
     default: false
   }
-},
-{ timestamps: true });
+},{ timestamps: true });
 // SensorSchema.plugin(AutoIncrement, { id: "sensor_id", inc_field: "sensor_id" });
 module.exports = mongoose.model("SensorData", SensorDataSchema);
