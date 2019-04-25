@@ -1,7 +1,8 @@
 const mongoose = require("mongoose");
 const Request = require('./models/Request');
-const Sensor = require('./models/SensorData');
+const SensorData = require('./models/SensorData');
 const User= require('./models/User');
+const Node= require('./models/Node');
 const Cluster= require('./models/Cluster');
 const dbRoute = "mongodb+srv://dbUser:Qwerty@123@cluster0-auqrg.mongodb.net/mydb";
 
@@ -26,6 +27,16 @@ async function findRequestsForUser(user_id)
     return result;
 }
 
+async function getSensorDatafromNodeid(node_id)
+{
+    var query = { node_id: node_id };
+    console.log(query);
+    find_result= SensorData.find(query)
+    result= await find_result.exec();
+    return result;
+}
+
+
 async function listClusternames(user_name, zipcode)
 {
     user_find= User.find({name:user_name},{_id:1});
@@ -35,6 +46,19 @@ async function listClusternames(user_name, zipcode)
     var query = { user_id: uid , areaCode: zipcode};
     console.log(query);
     find_result= Cluster.find(query, {cluster_name:1, _id:0});
+    result= await find_result.exec();
+    return result;
+}
+
+async function listNodes(cluster_name)
+{
+    cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1,_id:0});
+    cluster_op= await cluster_find.exec();
+    var Cl_id=cluster_op[0]['cluster_id'].toString();
+    
+    var query = { cluster_id: Cl_id};
+    console.log(query);
+    find_result= Node.find(query);
     result= await find_result.exec();
     return result;
 }
@@ -142,7 +166,7 @@ async function dataViewQuery(user_name,zipcode, cluster_name, node_id, sensor_ty
         query['type']= sensor_type;
     }
     console.log(query);
-    find_result= Sensor.find(query);
+    find_result= SensorData.find(query);
     result= await find_result.exec();
     //result[0]['cluster_name']='2';
     return result;
@@ -164,7 +188,7 @@ async function testQueries()
 //daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     //daa = await findUserForRequests("5cbd62b6a090d8249f70a016");
  //   daa = await dataViewQuery("Akshay",null, null, null , 'airflow');
- daa = await listClusternames("Akshay","76123");
+ daa = await getSensorDatafromNodeid("4001");
  console.log(daa);
 }
 
