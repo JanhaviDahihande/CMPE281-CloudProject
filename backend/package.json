@@ -14,6 +14,7 @@
     "express": "^4.16.4",
     "mongo-sync": "^2.0.1",
     "mongoose": "^5.4.20",
+    "mongoose-sequence": "^5.0.1",
     "morgan": "^1.9.1",
     "request": "^2.88.0",
     "sync-request": "^6.1.0"

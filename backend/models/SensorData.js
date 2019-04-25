@@ -1,7 +1,11 @@
 const mongoose = require("mongoose");
 let AutoIncrement = require("mongoose-sequence")(mongoose);
 const bcrypt = require("bcrypt");
-const SensorSchema = new mongoose.Schema({
+const SensorDataSchema = new mongoose.Schema({
+  sensor_id: {
+    type: String,
+    default: ""
+  },
   createdTime: {
     type: String,
     default: ""
@@ -14,7 +18,15 @@ const SensorSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
-  sensor_type: {
+  type: {
+    type: String,
+    default: ""
+  },
+  value: {
+    type: String,
+    default: ""
+  },
+  last_online: {
     type: String,
     default: ""
   },
@@ -23,5 +35,5 @@ const SensorSchema = new mongoose.Schema({
     default: false
   }
 });
-SensorSchema.plugin(AutoIncrement, { id: "sensor_id", inc_field: "sensor_id" });
-module.exports = mongoose.model("Sensor", SensorSchema);
+// SensorSchema.plugin(AutoIncrement, { id: "sensor_id", inc_field: "sensor_id" });
+module.exports = mongoose.model("SensorData", SensorDataSchema);

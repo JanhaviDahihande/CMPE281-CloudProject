@@ -1,18 +1,22 @@
-const mongoose = require('mongoose');
-let AutoIncrement = require('mongoose-sequence')(mongoose);
-const bcrypt = require('bcrypt');
+const mongoose = require("mongoose");
+let AutoIncrement = require("mongoose-sequence")(mongoose);
+const bcrypt = require("bcrypt");
 const NodeSchema = new mongoose.Schema({
   createdTime: {
     type: String,
-    default: ''
+    default: ""
   },
   cluster_id: {
     type: String,
-    default: ''
+    default: ""
   },
-  location_id: {
+  latitude: {
     type: String,
-    default: ''
+    default: ""
+  },
+  longitude: {
+    type: String,
+    default: ""
   },
   status: {
     type: Boolean,
@@ -26,5 +30,5 @@ NodeSchema.methods.generateHash = function(password) {
 NodeSchema.methods.validPassword = function(password) {
   return bcrypt.compareSync(password, this.password);
 };
-NodeSchema.plugin(AutoIncrement, {id:'node_id',inc_field: 'node_id'});
-module.exports = mongoose.model('Node', NodeSchema);
+NodeSchema.plugin(AutoIncrement, { id: "node_id", inc_field: "node_id" });
+module.exports = mongoose.model("Node", NodeSchema);

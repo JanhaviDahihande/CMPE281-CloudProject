@@ -9,6 +9,8 @@ const User = require("./models/User");
 const UserSession = require("./models/UserSession");
 const Request = require("./models/Request");
 const Cluster = require("./models/Cluster");
+const Node = require("./models/Node");
+const Sensor = require("./models/Sensor");
 
 const API_PORT = 3002;
 const app = express();
@@ -284,7 +286,7 @@ app.post("/api/request/newRequest", (req, res, next) => {
 
 app.get("/api/myrequests/:id", (req, res, next) => {
   let id = req.params.id;
-  console.log("id: " + id.toString());
+  // console.log("id: " + id.toString());
   var query = { user_id: id.toString() };
   find_result = Request.find(query);
   result = find_result.exec();
@@ -296,7 +298,7 @@ app.get("/api/myrequests/:id", (req, res, next) => {
   //   });
   // });
   result.then(function(data) {
-    console.log(data);
+    // console.log(data);
     return res.send({
       success: true,
       message: JSON.stringify(data)
@@ -309,7 +311,7 @@ app.get("/api/farmerrequests", (req, res, next) => {
   result = find_result.exec();
 
   result.then(function(data) {
-    console.log(data);
+    // console.log(data);
     return res.send({
       success: true,
       message: JSON.stringify(data)
@@ -322,7 +324,7 @@ app.get("/api/users", (req, res, next) => {
   result = find_result.exec();
 
   result.then(function(data) {
-    console.log(data);
+    // console.log(data);
     return res.send({
       success: true,
       message: JSON.stringify(data)
@@ -391,11 +393,11 @@ app.post("/api/request/update", (req, res, next) => {
 });
 
 app.get("/api/manageinfrastruture/cluster/view", (req, res, next) => {
-  find_result= Cluster.find()
-  result= find_result.exec();
-  
-  result.then(function(data){
-    console.log(data);
+  find_result = Cluster.find();
+  result = find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
     return res.send({
       success: true,
       message: JSON.stringify(data)
@@ -404,16 +406,17 @@ app.get("/api/manageinfrastruture/cluster/view", (req, res, next) => {
 });
 
 app.put("/api/manageinfrastruture/cluster/update", (req, res, next) => {
-  
   const { current_cluster_id, cluster_id, cluster_name } = req.body;
   var query = { cluster_id: current_cluster_id };
-  find_result = Cluster.updateOne(query, { $set: { cluster_id: cluster_id, cluster_name: cluster_name },  });
+  find_result = Cluster.updateOne(query, {
+    $set: { cluster_id: cluster_id, cluster_name: cluster_name }
+  });
   result = find_result.exec();
   return result;
 });
 
 app.delete("/api/manageinfrastruture/cluster/delete", (req, res, next) => {
-  const { cluster_id} = req.body;
+  const { cluster_id } = req.body;
   var query = { cluster_id: cluster_id };
   find_result = Cluster.deleteOne(query, err => {
     if (err) return res.send(err);
@@ -423,7 +426,175 @@ app.delete("/api/manageinfrastruture/cluster/delete", (req, res, next) => {
   return result;
 });
 
-// append /api for our http requests
+app.post("/api/manageinfrastruture/node/add", (req, res, next) => {
+  const { body } = req;
+  const { cluster_id } = body;
+  let { latitude } = body;
+  let { longitude } = body;
+
+  if (!cluster_id) {
+    return res.send({
+      success: false,
+      message: "Error: Cluster Id cannot be blank."
+    });
+  }
+  if (!latitude) {
+    return res.send({
+      success: false,
+      message: "Error: Latitude cannot be blank."
+    });
+  }
+  if (!longitude) {
+    return res.send({
+      success: false,
+      message: "Error: Longitude cannot be blank."
+    });
+  }
+
+  // Save the new request
+  const newNode = new Node();
+
+  newNode.cluster_id = cluster_id;
+  newNode.latitude = latitude;
+  newNode.longitude = longitude;
+  newNode.status = true;
+
+  newNode.save((err, user) => {
+    if (err) {
+      return res.send({
+        success: false,
+        message: "Error: Server error"
+      });
+    }
+    return res.send({
+      success: true,
+      message: "New Node added"
+    });
+  });
+});
+
+app.post("/api/manageinfrastruture/node/update", (req, res, next) => {
+  const { cluster_id, node_id, latitude, longitude } = req.body;
+
+  var query = { cluster_id: cluster_id };
+  find_result = Node.updateOne(query, {
+    $set: { latitude: latitude, longitude: longitude }
+  });
+  result = find_result.exec();
+  console.log(result);
+  return result;
+});
+
+app.delete("/api/manageinfrastruture/node/delete", (req, res, next) => {
+  const { cluster_id, node_id } = req.body;
+  var query = { cluster_id: cluster_id, node_id: node_id };
+  find_result = Node.deleteOne(query, err => {
+    if (err) return res.send(err);
+    return res.json({ success: true });
+  });
+  result = find_result.exec();
+  return result;
+});
+
+app.get("/api/manageinfrastruture/node/view", (req, res, next) => {
+  find_result = Node.find();
+  result = find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.post("/api/manageinfrastruture/sensor/add", (req, res, next) => {
+  console.log("Add sensor");
+  const { cluster_id, node_id, sensor_type, sensor_status } = req.body;
+
+  if (!cluster_id) {
+    return res.send({
+      success: false,
+      message: "Error: Cluster Id cannot be blank."
+    });
+  }
+  if (!node_id) {
+    return res.send({
+      success: false,
+      message: "Error: Node Id cannot be blank."
+    });
+  }
+  if (!sensor_type) {
+    return res.send({
+      success: false,
+      message: "Error: Sensor type cannot be blank."
+    });
+  }
+
+  // Save the new request
+  const newSensor = new Sensor();
+
+  newSensor.cluster_id = cluster_id;
+  newSensor.node_id = node_id;
+  newSensor.sensor_type = sensor_type;
+  newSensor.status = sensor_status;
+
+  newSensor.save((err, user) => {
+    if (err) {
+      return res.send({
+        success: false,
+        message: "Error: Server error"
+      });
+    }
+    return res.send({
+      success: true,
+      message: "New Sensor added"
+    });
+  });
+});
+
+app.post("/api/manageinfrastruture/sensor/update", (req, res, next) => {
+  const { cluster_id, node_id, sensor_id } = req.body;
+
+  var query = { cluster_id: cluster_id, node_id: node_id };
+  find_result = Sensor.updateOne(query, {
+    $set: { sensor_id: sensor_id }
+  });
+  result = find_result.exec();
+  console.log(result);
+  return result;
+});
+
+app.delete("/api/manageinfrastruture/sensor/delete", (req, res, next) => {
+  const { cluster_id, node_id, sensor_id } = req.body;
+  var query = {
+    cluster_id: cluster_id,
+    node_id: node_id,
+    sensor_id: sensor_id
+  };
+  find_result = Sensor.deleteOne(query, err => {
+    if (err) return res.send(err);
+    return res.json({ success: true });
+  });
+  result = find_result.exec();
+  return result;
+});
+
+app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
+  find_result = Sensor.find();
+  result = find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+// append /api for our http requestsf
 //change1
 // app.use("/api", router);
 app.use("/api", router);
