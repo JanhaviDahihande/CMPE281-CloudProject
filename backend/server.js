@@ -337,6 +337,7 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
   const { areaCode } = body;
   let { ipAddr } = body;
   let { cluster_name } = body;
+  let { user_id } = body;
 
   if (!areaCode) {
     return res.send({
@@ -364,6 +365,7 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
   newCluster.ipAddr = ipAddr;
   newCluster.cluster_name = cluster_name;
   newCluster.status = true;
+  newCluster.user_id = user_id;
   newCluster.save((err, user) => {
     if (err) {
       return res.send({
@@ -476,7 +478,7 @@ app.post("/api/manageinfrastruture/node/add", (req, res, next) => {
 app.post("/api/manageinfrastruture/node/update", (req, res, next) => {
   const { cluster_id, node_id, latitude, longitude } = req.body;
 
-  var query = { cluster_id: cluster_id };
+  var query = { cluster_id: cluster_id , node_id: node_id};
   find_result = Node.updateOne(query, {
     $set: { latitude: latitude, longitude: longitude }
   });
@@ -509,7 +511,7 @@ app.get("/api/manageinfrastruture/node/view", (req, res, next) => {
   });
 });
 
-app.post("/api/manageinfrastruture/sensor/add", (req, res, next) => {
+app.post("/api/manageinfrastruture/sensor/add", (req, res) => {
   console.log("Add sensor");
   const { cluster_id, node_id, sensor_type, sensor_status } = req.body;
 
@@ -539,19 +541,18 @@ app.post("/api/manageinfrastruture/sensor/add", (req, res, next) => {
   newSensor.node_id = node_id;
   newSensor.sensor_type = sensor_type;
   newSensor.status = sensor_status;
-
-  newSensor.save((err, user) => {
-    if (err) {
-      return res.send({
-        success: false,
-        message: "Error: Server error"
-      });
-    }
+newSensor.save((err, user) => {
+  if (err) {
     return res.send({
-      success: true,
-      message: "New Sensor added"
+      success: false,
+      message: "Error: Server error"
     });
+  }
+  return res.send({
+    success: true,
+    message: "New Sensor added"
   });
+});
 });
 
 app.post("/api/manageinfrastruture/sensor/update", (req, res, next) => {
@@ -592,6 +593,11 @@ app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
       message: JSON.stringify(data)
     });
   });
+});
+
+app.get("/api/users/:user_name/zip/:zip_code", (req, res) => {
+  const { user_name, zip_code} = req.body;
+
 });
 
 // append /api for our http requestsf
