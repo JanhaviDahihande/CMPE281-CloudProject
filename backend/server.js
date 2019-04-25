@@ -597,67 +597,111 @@ app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
   });
 });
 
-app.get("/api/users/:user_name/zip/:zipcode", async (req, res) => {
-  const { user_name, zipcode} = req.body;
-  var query = {};
-    if(user_name!=null)
-    { 
-        user_find= User.find({name:user_name},{_id:1});
-        user_op= await user_find.exec();
-        var uid=user_op[0]['_id'].toString();
-        cluster_find2= Cluster.find({user_id:uid},{cluster_id:1, _id:0});
-        cluster_op2= await cluster_find2.exec();
-        var size = Object.keys(cluster_op2).length;
-        if(size>1){
-            var or_query=[];
-            for(item in cluster_op2)
-            {
-                or_query.push(cluster_op2[item]);
-            }
-            query['$or']= or_query;
-        }
-        else{
-        query['cluster_id']= cluster_op2['cluster_id'];
-        }
+// app.get("/api/users/:user_name/zip/:zipcode", async (req, res) => {
+//   const { user_name, zipcode} = req.body;
+//   var query = {};
+//     if(user_name!=null)
+//     { 
+//         user_find= User.find({name:user_name},{_id:1});
+//         user_op= await user_find.exec();
+//         var uid=user_op[0]['_id'].toString();
+//         cluster_find2= Cluster.find({user_id:uid},{cluster_id:1, _id:0});
+//         cluster_op2= await cluster_find2.exec();
+//         var size = Object.keys(cluster_op2).length;
+//         if(size>1){
+//             var or_query=[];
+//             for(item in cluster_op2)
+//             {
+//                 or_query.push(cluster_op2[item]);
+//             }
+//             query['$or']= or_query;
+//         }
+//         else{
+//         query['cluster_id']= cluster_op2['cluster_id'];
+//         }
         
-    }
-    if(zipcode!=null){
-        cluster_find2= Cluster.find({areaCode:zipcode},{cluster_id:1, _id:0});
-        cluster_op2= await cluster_find2.exec();
-        console.log(cluster_op2);
-        var size = Object.keys(cluster_op2).length;
-        if(size>1){
-            var or_query=[];
-            for(item in cluster_op2)
-            {
-                or_query.push(cluster_op2[item]);
-            }
-            query['$or']= or_query;
-        }
-        else{
-        query['cluster_id']= cluster_op2['cluster_id'];
-        }
-    }
-    if(cluster_name!=null){
-        cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1, _id:0});
-        cluster_op= await cluster_find.exec();
-        query['cluster_id']= cluster_op[0]['cluster_id'];
-      }
-    if(node_id!=null)
-        query['node_id']= node_id;
-    if(sensor_type!=null){
-        query['type']= sensor_type;
-    }
-    find_result= Sensor.find(query);
-    result= find_result.exec();
-    //result[0]['cluster_name']='2';
-    result.then(function(data) {
-      // console.log(data);
-      return res.send({
-        success: true,
-        message: JSON.stringify(data)
-      });
+//     }
+//     if(zipcode!=null){
+//         cluster_find2= Cluster.find({areaCode:zipcode},{cluster_id:1, _id:0});
+//         cluster_op2= await cluster_find2.exec();
+//         console.log(cluster_op2);
+//         var size = Object.keys(cluster_op2).length;
+//         if(size>1){
+//             var or_query=[];
+//             for(item in cluster_op2)
+//             {
+//                 or_query.push(cluster_op2[item]);
+//             }
+//             query['$or']= or_query;
+//         }
+//         else{
+//         query['cluster_id']= cluster_op2['cluster_id'];
+//         }
+//     }
+//     if(cluster_name!=null){
+//         cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1, _id:0});
+//         cluster_op= await cluster_find.exec();
+//         query['cluster_id']= cluster_op[0]['cluster_id'];
+//       }
+//     if(node_id!=null)
+//         query['node_id']= node_id;
+//     if(sensor_type!=null){
+//         query['type']= sensor_type;
+//     }
+//     find_result= Sensor.find(query);
+//     result= find_result.exec();
+//     //result[0]['cluster_name']='2';
+//     result.then(function(data) {
+//       // console.log(data);
+//       return res.send({
+//         success: true,
+//         message: JSON.stringify(data)
+//       });
+//     });
+// });
+
+app.get("/api/users/:user_name/zip/:zipcode", async (req, res, next) => {
+  let user_name = req.params.user_name;
+  let zipcode = req.params.zipcode;
+
+  console.log(user_name + "_" + zipcode);
+  user_find= User.find({name:user_name},{_id:1});
+  user_op= await user_find.exec();
+  var uid=user_op[0]['_id'].toString();
+  
+  var query = { user_id: uid , areaCode: zipcode};
+  console.log(query);
+  find_result= Cluster.find(query, {cluster_name:1, _id:0});
+  result= find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
     });
+  });
+});
+
+app.get("/api/cluster/:cluster_name", async (req, res, next) => {
+  let cluster_name = req.params.cluster_name;
+
+  cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1,_id:0});
+  cluster_op= await cluster_find.exec();
+  var Cl_id=cluster_op[0]['cluster_id'].toString();
+  
+  var query = { cluster_id: Cl_id};
+  console.log(query);
+  find_result= Node.find(query);
+  result= find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
 });
 
 // append /api for our http requestsf
