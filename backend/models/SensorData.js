@@ -6,7 +6,6 @@ const SensorDataSchema = new mongoose.Schema({
     type: String,
     default: ""
   },
-
   node_id: {
     type: String,
     default: ""

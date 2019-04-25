@@ -26,6 +26,19 @@ async function findRequestsForUser(user_id)
     return result;
 }
 
+async function listClusternames(user_name, zipcode)
+{
+    user_find= User.find({name:user_name},{_id:1});
+    user_op= await user_find.exec();
+    var uid=user_op[0]['_id'].toString();
+    
+    var query = { user_id: uid , areaCode: zipcode};
+    console.log(query);
+    find_result= Cluster.find(query, {cluster_name:1, _id:0});
+    result= await find_result.exec();
+    return result;
+}
+
 async function findUserForRequests(user_id)
 {
     db.collection('farmerrequests').aggregate([
@@ -150,8 +163,9 @@ async function testQueries()
 {
 //daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     //daa = await findUserForRequests("5cbd62b6a090d8249f70a016");
-    daa = await dataViewQuery("Akshay",null, null, null , 'airflow');
-    console.log(daa);
+ //   daa = await dataViewQuery("Akshay",null, null, null , 'airflow');
+ daa = await listClusternames("Akshay","76123");
+ console.log(daa);
 }
 
 
