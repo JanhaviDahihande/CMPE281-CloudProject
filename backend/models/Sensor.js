@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 let AutoIncrement = require("mongoose-sequence")(mongoose);
 const bcrypt = require("bcrypt");
 const SensorSchema = new mongoose.Schema({
-  createdTime: {
-    type: String,
-    default: ""
-  },
   node_id: {
     type: String,
     default: ""
@@ -22,6 +18,7 @@ const SensorSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-});
+},
+{ timestamps: true });
 SensorSchema.plugin(AutoIncrement, { id: "sensor_id", inc_field: "sensor_id" });
 module.exports = mongoose.model("Sensor", SensorSchema);

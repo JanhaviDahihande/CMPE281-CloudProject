@@ -22,6 +22,7 @@ let farmerRequestSchema = mongoose.Schema({
 		type: String,
 		required: true
 	}
-});
+},
+{ timestamps: true });
 farmerRequestSchema.plugin(AutoIncrement, {id:'requestId',inc_field: 'requestId'});
 let FarmerRequest = module.exports = mongoose.model('FarmerRequest',farmerRequestSchema);

@@ -2,10 +2,6 @@ const mongoose = require("mongoose");
 let AutoIncrement = require("mongoose-sequence")(mongoose);
 const bcrypt = require("bcrypt");
 const NodeSchema = new mongoose.Schema({
-  createdTime: {
-    type: String,
-    default: ""
-  },
   cluster_id: {
     type: String,
     default: ""
@@ -22,7 +18,8 @@ const NodeSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
-});
+},
+{ timestamps: true });
 
 NodeSchema.methods.generateHash = function(password) {
   return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
