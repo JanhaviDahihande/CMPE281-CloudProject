@@ -12,11 +12,8 @@ let sensorStatusSchema = mongoose.Schema({
 	sensorId:{
 		type: Number,
 		required: true
-	},
-	currentTimeStamp:{
-		type: String,
-		required: true
 	}
-});
+
+},{ timestamps: true });
 
 let SensorStatus = module.exports = mongoose.model('SensorStatus',sensorStatusSchema);

@@ -1,6 +1,7 @@
 const http = require('http');
 var request = require('sync-request');
 const SensorData = require('./models/SensorData');
+const SensorStatus = require('./models/sensorstatus');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
@@ -33,6 +34,7 @@ function fetch(port)
 
 function getJsonData()
 {   
+
     var jData= fetch(port);
     for (var key in jData) {
         if (jData.hasOwnProperty(key)) {
@@ -46,6 +48,13 @@ function getJsonData()
           console.log(key + ": " + jData[key].tempData);
           var obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
+          var status=  new SensorStatus();
+          status.clusterId= cluster_id;
+          status.nodeId= key;
+          status.sensorId= 1;
+          var obj2 = new SensorStatus(status);
+          obj2.save((err, user) => {console.log("status saved") });
+          
           
           newData= new SensorData();
           newData.sensor_id= 2; 
@@ -57,7 +66,13 @@ function getJsonData()
           console.log(key + ": " + jData[key].phData);
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
-          
+          status=  new SensorStatus();
+          status.clusterId= cluster_id;
+          status.nodeId= key;
+          status.sensorId= 2;
+          obj2 = new SensorStatus(status);
+          obj2.save((err, user) => {console.log("Data saved") });
+
           newData= new SensorData();
           newData.sensor_id= 3; 
           newData.node_id= key; 
@@ -68,6 +83,12 @@ function getJsonData()
           console.log(key + ": " + jData[key].airflowData);
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
+          status=  new SensorStatus();
+          status.clusterId= cluster_id;
+          status.nodeId= key;
+          status.sensorId= 3;
+          obj2 = new SensorStatus(status);
+          obj2.save((err, user) => {console.log("Data saved") });
           
           newData= new SensorData();
           newData.sensor_id= 4; 
@@ -79,7 +100,12 @@ function getJsonData()
           console.log(key + ": " + jData[key].humidData);
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
-          
+          status=  new SensorStatus();
+          status.clusterId= cluster_id;
+          status.nodeId= key;
+          status.sensorId= 4;
+          obj2 = new SensorStatus(status);
+          obj2.save((err, user) => {console.log("Data saved") });
         }
       }
    // const obj = new mongoSensor(jData);
