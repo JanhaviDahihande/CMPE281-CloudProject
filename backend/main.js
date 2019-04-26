@@ -55,7 +55,7 @@ function getJsonData()
           // var obj2 = new SensorStatus(status);
           // obj2.update((err, user) => {console.log("status saved") });
           db.collection('sensorstatus').updateOne(
-            { sensorId:1, nodeId: key, clusterId:cluster_id, sensorType:"Temperature" },
+            { sensorId:1, nodeId: key, clusterId:cluster_id, sensorType:"Temperature", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
@@ -71,7 +71,7 @@ function getJsonData()
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
           db.collection('sensorstatus').updateOne(
-            { sensorId:2, nodeId: key, clusterId:cluster_id, sensorType:"ph" },
+            { sensorId:2, nodeId: key, clusterId:cluster_id, sensorType:"ph", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
@@ -87,7 +87,7 @@ function getJsonData()
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
           db.collection('sensorstatus').updateOne(
-            {sensorId:3, nodeId: key, clusterId:cluster_id, sensorType:"airflow" },
+            {sensorId:3, nodeId: key, clusterId:cluster_id, sensorType:"airflow", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
@@ -103,7 +103,7 @@ function getJsonData()
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
           db.collection('sensorstatus').updateOne(
-            {sensorId:4, nodeId: key, clusterId:cluster_id, sensorType:"humidity" },
+            {sensorId:4, nodeId: key, clusterId:cluster_id, sensorType:"humidity", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );

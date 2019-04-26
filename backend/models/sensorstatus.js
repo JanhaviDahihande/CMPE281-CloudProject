@@ -13,10 +13,17 @@ let sensorStatusSchema = mongoose.Schema({
 		type: Number,
 		required: true
 	},
+	sensorType:{
+		type: String,
+		required: true
+	},
+	status:{
+		type: Boolean,
+		required: true
+	},
 	last_online: {
 		type: Date, 
 		default: Date.now
 	}
 });
-
-let SensorStatus = module.exports = mongoose.model('SensorStatus',sensorStatusSchema);
+module.exports = mongoose.model('SensorStatus',sensorStatusSchema);
