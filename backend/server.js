@@ -11,6 +11,7 @@ const Request = require("./models/Request");
 const Cluster = require("./models/Cluster");
 const Node = require("./models/Node");
 const Sensor = require("./models/Sensor");
+const SensorData = require("./models/SensorData");
 
 const API_PORT = 3002;
 const app = express();
@@ -695,6 +696,28 @@ app.get("/api/cluster/:cluster_name", async (req, res, next) => {
   find_result= Node.find(query);
   result= find_result.exec();
 
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.get("/api/dataview/sensor/:node_id", (req, res, next) => {
+  let id = req.params.node_id;
+  // console.log("id: " + id.toString());
+  var query = { node_id: id.toString() };
+  find_result = SensorData.find(query);
+  result = find_result.exec();
+  // sleep(10000).then(() => {
+  //   console.log(result);
+  //   return res.send({
+  //     success: true,
+  //     message: JSON.stringify(result)
+  //   });
+  // });
   result.then(function(data) {
     // console.log(data);
     return res.send({
