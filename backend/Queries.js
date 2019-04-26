@@ -27,6 +27,17 @@ async function findRequestsForUser(user_id)
     return result;
 }
 
+async function getSensorDatabetDate(from,to)
+{
+    var query = { createdAt: {
+        $gte: from,
+        $lte: to
+      } };
+    find_result= SensorData.find(query)
+    result= await find_result.exec();
+    return result;
+}
+
 async function getSensorDatafromNodeid(node_id)
 {
     var query = { node_id: node_id };
