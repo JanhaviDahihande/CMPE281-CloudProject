@@ -188,7 +188,7 @@ async function testQueries()
 //daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     //daa = await findUserForRequests("5cbd62b6a090d8249f70a016");
  //   daa = await dataViewQuery("Akshay",null, null, null , 'airflow');
- daa = await getSensorDatafromNodeid("4001");
+ daa = await getSensorDatafromNodeid("2");
  console.log(daa);
 }
 
