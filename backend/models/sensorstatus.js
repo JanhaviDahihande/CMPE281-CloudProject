@@ -1,29 +1,29 @@
-let mongoose = require('mongoose');
+const mongoose = require('mongoose');
 
-let sensorStatusSchema = mongoose.Schema({
+const SensorStatusSchema = new mongoose.Schema({
 	clusterId:{
-		type: Number,
-		required: true
+		type: String,
+		default: ""
 	},
 	nodeId:{
-		type: Number,
-		required: true
+		type: String,
+		default: ""
 	},
 	sensorId:{
-		type: Number,
-		required: true
+		type: String,
+		default: ""
 	},
 	sensorType:{
 		type: String,
-		required: true
+		default: ""
 	},
 	status:{
 		type: Boolean,
-		required: true
+    	default: false
 	},
 	last_online: {
 		type: Date, 
 		default: Date.now
 	}
 });
-module.exports = mongoose.model('SensorStatus',sensorStatusSchema);
+module.exports = mongoose.model("SensorStatus",SensorStatusSchema);

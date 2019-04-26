@@ -12,6 +12,7 @@ const Cluster = require("./models/Cluster");
 const Node = require("./models/Node");
 const Sensor = require("./models/Sensor");
 const SensorData = require("./models/SensorData");
+const SensorStatus = require("./models/SensorStatus");
 
 const API_PORT = 3002;
 const app = express();
@@ -720,6 +721,20 @@ app.get("/api/dataview/sensor/:node_id", (req, res, next) => {
   // });
   result.then(function(data) {
     // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
+  console.log("Here");
+  find_result = Sensor.find();
+  result = find_result.exec();
+  console.log("Result: " + result);
+  result.then(function(data) {
+    console.log(data);
     return res.send({
       success: true,
       message: JSON.stringify(data)
