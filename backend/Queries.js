@@ -26,7 +26,7 @@ async function findRequestsForUser(user_id)
     result= await find_result.exec();
     return result;
 }
-
+//Below query needs Date type parameter
 async function getSensorDatabetDate(from,to)
 {
     var query = { createdAt: {
