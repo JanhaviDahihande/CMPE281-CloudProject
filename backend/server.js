@@ -730,16 +730,18 @@ app.get("/api/dataview/sensor/:node_id", (req, res, next) => {
 
 app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
   console.log("Here");
-  find_result = Sensor.find();
-  result = find_result.exec();
-  console.log("Result: " + result);
-  result.then(function(data) {
-    console.log(data);
+  // find_result = SensorStatus.find();
+  // result = find_result.exec();
+
+  SensorStatus.find().exec(function(err, result){
+    if (err) throw err;
+    console.log("Result: " + result);
     return res.send({
       success: true,
-      message: JSON.stringify(data)
+      message: JSON.stringify(result)
     });
   });
+
 });
 
 // append /api for our http requestsf
