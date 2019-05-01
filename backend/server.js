@@ -11,8 +11,11 @@ const Request = require("./models/Request");
 const Cluster = require("./models/Cluster");
 const Node = require("./models/Node");
 const Sensor = require("./models/Sensor");
+<<<<<<< Updated upstream
 const SensorData = require("./models/SensorData");
 const SensorStatus = require("./models/SensorStatus");
+=======
+>>>>>>> Stashed changes
 
 const API_PORT = 3002;
 const app = express();
@@ -339,7 +342,6 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
   const { areaCode } = body;
   let { ipAddr } = body;
   let { cluster_name } = body;
-  let { user_id } = body;
 
   if (!areaCode) {
     return res.send({
@@ -362,12 +364,11 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
 
   // Save the new request
   const newCluster = new Cluster();
-
+  
   newCluster.areaCode = areaCode;
   newCluster.ipAddr = ipAddr;
   newCluster.cluster_name = cluster_name;
   newCluster.status = true;
-  newCluster.user_id = user_id;
   newCluster.save((err, user) => {
     if (err) {
       return res.send({
@@ -477,10 +478,10 @@ app.post("/api/manageinfrastruture/node/add", (req, res, next) => {
   });
 });
 
-app.put("/api/manageinfrastruture/node/update", (req, res, next) => {
+app.post("/api/manageinfrastruture/node/update", (req, res, next) => {
   const { cluster_id, node_id, latitude, longitude } = req.body;
 
-  var query = { cluster_id: cluster_id , node_id: node_id};
+  var query = { cluster_id: cluster_id };
   find_result = Node.updateOne(query, {
     $set: { latitude: latitude, longitude: longitude }
   });
@@ -513,7 +514,7 @@ app.get("/api/manageinfrastruture/node/view", (req, res, next) => {
   });
 });
 
-app.post("/api/manageinfrastruture/sensor/add", (req, res) => {
+app.post("/api/manageinfrastruture/sensor/add", (req, res, next) => {
   console.log("Add sensor");
   const { cluster_id, node_id, sensor_type, sensor_status } = req.body;
 
@@ -543,21 +544,22 @@ app.post("/api/manageinfrastruture/sensor/add", (req, res) => {
   newSensor.node_id = node_id;
   newSensor.sensor_type = sensor_type;
   newSensor.status = sensor_status;
-newSensor.save((err, user) => {
-  if (err) {
+
+  newSensor.save((err, user) => {
+    if (err) {
+      return res.send({
+        success: false,
+        message: "Error: Server error"
+      });
+    }
     return res.send({
-      success: false,
-      message: "Error: Server error"
+      success: true,
+      message: "New Sensor added"
     });
-  }
-  return res.send({
-    success: true,
-    message: "New Sensor added"
   });
 });
-});
 
-app.put("/api/manageinfrastruture/sensor/update", (req, res, next) => {
+app.post("/api/manageinfrastruture/sensor/update", (req, res, next) => {
   const { cluster_id, node_id, sensor_id } = req.body;
 
   var query = { cluster_id: cluster_id, node_id: node_id };
@@ -570,14 +572,12 @@ app.put("/api/manageinfrastruture/sensor/update", (req, res, next) => {
 });
 
 app.delete("/api/manageinfrastruture/sensor/delete", (req, res, next) => {
-  console.log("Here!");
   const { cluster_id, node_id, sensor_id } = req.body;
   var query = {
     cluster_id: cluster_id,
     node_id: node_id,
     sensor_id: sensor_id
   };
-  console.log(query);
   find_result = Sensor.deleteOne(query, err => {
     if (err) return res.send(err);
     return res.json({ success: true });
@@ -599,6 +599,7 @@ app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
   });
 });
 
+<<<<<<< Updated upstream
 // app.get("/api/users/:user_name/zip/:zipcode", async (req, res) => {
 //   const { user_name, zipcode} = req.body;
 //   var query = {};
@@ -744,6 +745,8 @@ app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
 
 });
 
+=======
+>>>>>>> Stashed changes
 // append /api for our http requestsf
 //change1
 // app.use("/api", router);

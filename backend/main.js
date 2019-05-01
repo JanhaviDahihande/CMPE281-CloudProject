@@ -1,12 +1,15 @@
 const http = require('http');
+var readline = require('readline-sync');
 var request = require('sync-request');
 const SensorData = require('./models/SensorData');
-const SensorStatus = require('./models/sensorstatus');
+const SensorStatus = require('./models/SensorStatus');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
-var port= '8008';
-var cluster_id='1';
+var ClusterArray = new Array();
+var Num_Clusters = readline.question("How many Clusters:");
+for(var l=0; l<Num_Clusters; l++)
+{ClusterArray[l] = readline.question("Cluster Address: ");}
     
 const dbRoute = "mongodb+srv://dbUser:Qwerty@123@cluster0-auqrg.mongodb.net/mydb";
 
@@ -23,9 +26,9 @@ db.once("open", () => console.log("connected to the database"));
 db.on("error", console.error.bind(console, "MongoDB connection error:"));
   
 
-function fetch(port)
+function fetch(Address)
 {
-    url= 'http://localhost:'+port+'/getAllData'
+    url= 'http://'+Address+'/getAllData'
     var res = request('GET', url);
     var result = JSON.parse(res.getBody());
     return result ;
@@ -34,36 +37,33 @@ function fetch(port)
 
 function getJsonData()
 {   
-
-    var jData= fetch(port);
+  for (var i=0;i<ClusterArray.length;i++){
+    cUrl= 'http://'+ClusterArray[i]+'/getClusterInfo'
+    var res = request('GET', cUrl);
+    ClusterInfo = JSON.parse(res.getBody());
+    var jData= fetch(ClusterArray[i]);
     for (var key in jData) {
         if (jData.hasOwnProperty(key)) {
           var newData= new SensorData();
           newData.sensor_id= 1; 
-          newData.node_id= key; 
-          newData.cluster_id= cluster_id; 
+          newData.node_id=ClusterInfo.nodes[key] ; 
+          newData.cluster_id= ClusterInfo.cluster_id; 
           newData.type = 'temperature';
           newData.value= jData[key].tempData;
           newData.status= true;
           console.log(key + ": " + jData[key].tempData);
           var obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
-          // var status=  new SensorStatus();
-          // status.clusterId= cluster_id;
-          // status.nodeId= key;new Date()
-          // status.sensorId= 1;
-          // var obj2 = new SensorStatus(status);
-          // obj2.update((err, user) => {console.log("status saved") });
           db.collection('sensorstatus').updateOne(
-            { sensorId:1, nodeId: key, clusterId:cluster_id, sensorType:"Temperature", status:true },
+            { sensorId:1, nodeId: ClusterInfo.nodes[key], clusterId:ClusterInfo.cluster_id, sensorType:"Temperature", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
           
           newData= new SensorData();
           newData.sensor_id= 2; 
-          newData.node_id= key; 
-          newData.cluster_id= cluster_id; 
+          newData.node_id= ClusterInfo.nodes[key]; 
+          newData.cluster_id= ClusterInfo.cluster_id; 
           newData.type = 'ph';
           newData.value= jData[key].phData;
           newData.status= true;
@@ -71,15 +71,15 @@ function getJsonData()
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
           db.collection('sensorstatus').updateOne(
-            { sensorId:2, nodeId: key, clusterId:cluster_id, sensorType:"ph", status:true },
+            { sensorId:2, nodeId: ClusterInfo.nodes[key], clusterId:ClusterInfo.cluster_id, sensorType:"ph", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
 
           newData= new SensorData();
           newData.sensor_id= 3; 
-          newData.node_id= key; 
-          newData.cluster_id= cluster_id; 
+          newData.node_id= ClusterInfo.nodes[key]; 
+          newData.cluster_id= ClusterInfo.cluster_id; 
           newData.type = 'airflow';
           newData.value= jData[key].airflowData;
           newData.status= true;
@@ -87,15 +87,15 @@ function getJsonData()
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
           db.collection('sensorstatus').updateOne(
-            {sensorId:3, nodeId: key, clusterId:cluster_id, sensorType:"airflow", status:true },
+            {sensorId:3, nodeId: ClusterInfo.nodes[key], clusterId:ClusterInfo.cluster_id, sensorType:"airflow", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
 
           newData= new SensorData();
           newData.sensor_id= 4; 
-          newData.node_id= key; 
-          newData.cluster_id= cluster_id; 
+          newData.node_id= ClusterInfo.nodes[key]; 
+          newData.cluster_id= ClusterInfo.cluster_id; 
           newData.type = 'humidity';
           newData.value= jData[key].humidData;
           newData.status= true;
@@ -103,14 +103,14 @@ function getJsonData()
           obj = new SensorData(newData);
           obj.save((err, user) => {console.log("Data saved") });
           db.collection('sensorstatus').updateOne(
-            {sensorId:4, nodeId: key, clusterId:cluster_id, sensorType:"humidity", status:true },
+            {sensorId:4, nodeId: ClusterInfo.nodes[key], clusterId:ClusterInfo.cluster_id, sensorType:"humidity", status:true },
             { $set: { last_online: new Date() } },
             { upsert: true }
           );
         }
       }
-   // const obj = new mongoSensor(jData);
-    //obj.save((err, user) => {console.log("Data saved") });
+    }
+  
 }
 
 function run() {

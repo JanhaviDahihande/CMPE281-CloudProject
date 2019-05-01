@@ -27,6 +27,7 @@ const SensorDataSchema = new mongoose.Schema({
     type: Boolean,
     default: false
   }
+ 
 },{ timestamps: true });
 // SensorSchema.plugin(AutoIncrement, { id: "sensor_id", inc_field: "sensor_id" });
 module.exports = mongoose.model("SensorData", SensorDataSchema);

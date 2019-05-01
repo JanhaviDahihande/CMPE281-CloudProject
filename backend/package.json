@@ -16,6 +16,7 @@
     "mongoose": "^5.4.20",
     "mongoose-sequence": "^5.0.1",
     "morgan": "^1.9.1",
+    "readline-sync": "^1.4.9",
     "request": "^2.88.0",
     "sync-request": "^6.1.0"
   }

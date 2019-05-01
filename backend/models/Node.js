@@ -17,6 +17,14 @@ const NodeSchema = new mongoose.Schema({
   status: {
     type: Boolean,
     default: false
+  },
+  ip: {
+    type: String,
+    default: ""
+  },
+  port: {
+    type: String,
+    default: ""
   }
 },
 { timestamps: true });

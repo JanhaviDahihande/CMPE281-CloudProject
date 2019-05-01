@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const Request = require('./models/Request');
 const SensorData = require('./models/SensorData');
+const SensorStatus = require('./models/SensorStatus');
 const User= require('./models/User');
 const Node= require('./models/Node');
 const Cluster= require('./models/Cluster');
@@ -193,14 +194,26 @@ async function updateRequests(request_id, status_code)
     return result;
 }
 
+async function getTheData()
+{ 
+    var query = {nodeId: "4000" };
+    SensorStatus.find().exec(function(err, result) {
+        if (err) throw err;
+        console.log(result);
+        db.close();
+       });
+}
+
+
 
 async function testQueries()
 {
 //daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     //daa = await findUserForRequests("5cbd62b6a090d8249f70a016");
  //   daa = await dataViewQuery("Akshay",null, null, null , 'airflow');
- daa = await getSensorDatafromNodeid("2");
- console.log(daa);
+// daa = await getSensorDatafromNodeid("2");
+// console.log(daa);
+await getTheData();
 }
 
 
