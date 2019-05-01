@@ -11,6 +11,8 @@ const Request = require("./models/Request");
 const Cluster = require("./models/Cluster");
 const Node = require("./models/Node");
 const Sensor = require("./models/Sensor");
+const SensorData = require("./models/SensorData");
+const SensorStatus = require("./models/SensorStatus");
 
 const API_PORT = 3002;
 const app = express();
@@ -337,6 +339,7 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
   const { areaCode } = body;
   let { ipAddr } = body;
   let { cluster_name } = body;
+  let { user_id } = body;
 
   if (!areaCode) {
     return res.send({
@@ -359,11 +362,12 @@ app.post("/api/manageinfrastruture/cluster/add", (req, res, next) => {
 
   // Save the new request
   const newCluster = new Cluster();
-  
+
   newCluster.areaCode = areaCode;
   newCluster.ipAddr = ipAddr;
   newCluster.cluster_name = cluster_name;
   newCluster.status = true;
+  newCluster.user_id = user_id;
   newCluster.save((err, user) => {
     if (err) {
       return res.send({
@@ -473,10 +477,10 @@ app.post("/api/manageinfrastruture/node/add", (req, res, next) => {
   });
 });
 
-app.post("/api/manageinfrastruture/node/update", (req, res, next) => {
+app.put("/api/manageinfrastruture/node/update", (req, res, next) => {
   const { cluster_id, node_id, latitude, longitude } = req.body;
 
-  var query = { cluster_id: cluster_id };
+  var query = { cluster_id: cluster_id , node_id: node_id};
   find_result = Node.updateOne(query, {
     $set: { latitude: latitude, longitude: longitude }
   });
@@ -509,7 +513,7 @@ app.get("/api/manageinfrastruture/node/view", (req, res, next) => {
   });
 });
 
-app.post("/api/manageinfrastruture/sensor/add", (req, res, next) => {
+app.post("/api/manageinfrastruture/sensor/add", (req, res) => {
   console.log("Add sensor");
   const { cluster_id, node_id, sensor_type, sensor_status } = req.body;
 
@@ -539,22 +543,21 @@ app.post("/api/manageinfrastruture/sensor/add", (req, res, next) => {
   newSensor.node_id = node_id;
   newSensor.sensor_type = sensor_type;
   newSensor.status = sensor_status;
-
-  newSensor.save((err, user) => {
-    if (err) {
-      return res.send({
-        success: false,
-        message: "Error: Server error"
-      });
-    }
+newSensor.save((err, user) => {
+  if (err) {
     return res.send({
-      success: true,
-      message: "New Sensor added"
+      success: false,
+      message: "Error: Server error"
     });
+  }
+  return res.send({
+    success: true,
+    message: "New Sensor added"
   });
 });
+});
 
-app.post("/api/manageinfrastruture/sensor/update", (req, res, next) => {
+app.put("/api/manageinfrastruture/sensor/update", (req, res, next) => {
   const { cluster_id, node_id, sensor_id } = req.body;
 
   var query = { cluster_id: cluster_id, node_id: node_id };
@@ -567,12 +570,14 @@ app.post("/api/manageinfrastruture/sensor/update", (req, res, next) => {
 });
 
 app.delete("/api/manageinfrastruture/sensor/delete", (req, res, next) => {
+  console.log("Here!");
   const { cluster_id, node_id, sensor_id } = req.body;
   var query = {
     cluster_id: cluster_id,
     node_id: node_id,
     sensor_id: sensor_id
   };
+  console.log(query);
   find_result = Sensor.deleteOne(query, err => {
     if (err) return res.send(err);
     return res.json({ success: true });
@@ -592,6 +597,151 @@ app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
       message: JSON.stringify(data)
     });
   });
+});
+
+// app.get("/api/users/:user_name/zip/:zipcode", async (req, res) => {
+//   const { user_name, zipcode} = req.body;
+//   var query = {};
+//     if(user_name!=null)
+//     { 
+//         user_find= User.find({name:user_name},{_id:1});
+//         user_op= await user_find.exec();
+//         var uid=user_op[0]['_id'].toString();
+//         cluster_find2= Cluster.find({user_id:uid},{cluster_id:1, _id:0});
+//         cluster_op2= await cluster_find2.exec();
+//         var size = Object.keys(cluster_op2).length;
+//         if(size>1){
+//             var or_query=[];
+//             for(item in cluster_op2)
+//             {
+//                 or_query.push(cluster_op2[item]);
+//             }
+//             query['$or']= or_query;
+//         }
+//         else{
+//         query['cluster_id']= cluster_op2['cluster_id'];
+//         }
+        
+//     }
+//     if(zipcode!=null){
+//         cluster_find2= Cluster.find({areaCode:zipcode},{cluster_id:1, _id:0});
+//         cluster_op2= await cluster_find2.exec();
+//         console.log(cluster_op2);
+//         var size = Object.keys(cluster_op2).length;
+//         if(size>1){
+//             var or_query=[];
+//             for(item in cluster_op2)
+//             {
+//                 or_query.push(cluster_op2[item]);
+//             }
+//             query['$or']= or_query;
+//         }
+//         else{
+//         query['cluster_id']= cluster_op2['cluster_id'];
+//         }
+//     }
+//     if(cluster_name!=null){
+//         cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1, _id:0});
+//         cluster_op= await cluster_find.exec();
+//         query['cluster_id']= cluster_op[0]['cluster_id'];
+//       }
+//     if(node_id!=null)
+//         query['node_id']= node_id;
+//     if(sensor_type!=null){
+//         query['type']= sensor_type;
+//     }
+//     find_result= Sensor.find(query);
+//     result= find_result.exec();
+//     //result[0]['cluster_name']='2';
+//     result.then(function(data) {
+//       // console.log(data);
+//       return res.send({
+//         success: true,
+//         message: JSON.stringify(data)
+//       });
+//     });
+// });
+
+app.get("/api/users/:user_name/zip/:zipcode", async (req, res, next) => {
+  let user_name = req.params.user_name;
+  let zipcode = req.params.zipcode;
+
+  console.log(user_name + "_" + zipcode);
+  user_find= User.find({name:user_name},{_id:1});
+  user_op= await user_find.exec();
+  var uid=user_op[0]['_id'].toString();
+  
+  var query = { user_id: uid , areaCode: zipcode};
+  console.log(query);
+  find_result= Cluster.find(query, {cluster_name:1, _id:0});
+  result= find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.get("/api/cluster/:cluster_name", async (req, res, next) => {
+  let cluster_name = req.params.cluster_name;
+
+  cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1,_id:0});
+  cluster_op= await cluster_find.exec();
+  var Cl_id=cluster_op[0]['cluster_id'].toString();
+  
+  var query = { cluster_id: Cl_id};
+  console.log(query);
+  find_result= Node.find(query);
+  result= find_result.exec();
+
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.get("/api/dataview/sensor/:node_id", (req, res, next) => {
+  let id = req.params.node_id;
+  // console.log("id: " + id.toString());
+  var query = { node_id: id.toString() };
+  find_result = SensorData.find(query);
+  result = find_result.exec();
+  // sleep(10000).then(() => {
+  //   console.log(result);
+  //   return res.send({
+  //     success: true,
+  //     message: JSON.stringify(result)
+  //   });
+  // });
+  result.then(function(data) {
+    // console.log(data);
+    return res.send({
+      success: true,
+      message: JSON.stringify(data)
+    });
+  });
+});
+
+app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
+  console.log("Here");
+  // find_result = SensorStatus.find();
+  // result = find_result.exec();
+
+  SensorStatus.find().exec(function(err, result){
+    if (err) throw err;
+    console.log("Result: " + result);
+    return res.send({
+      success: true,
+      message: JSON.stringify(result)
+    });
+  });
+
 });
 
 // append /api for our http requestsf
