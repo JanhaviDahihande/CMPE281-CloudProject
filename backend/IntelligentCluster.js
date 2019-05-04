@@ -1,6 +1,8 @@
 var readline = require('readline-sync');
 const http = require('http');
+const url2 = require('url');
 var request = require('sync-request');
+const Node = require('./models/Node');
 const Cluster= require('./models/Cluster');
 const mongoose = require("mongoose");
 
@@ -17,7 +19,7 @@ mongoose.connect(
   db.once("open", () => console.log("connected to the database"));
   db.on("error", console.error.bind(console, "MongoDB connection error:"));
   
-var cluster_id = readline.question("Enter cluster id:");
+var cluster_id = readline.question("Enter cluster id :");
   
 async function findClusterData(Cluster_id)
 { 
@@ -28,12 +30,11 @@ async function findClusterData(Cluster_id)
 }
 
 var NodeArray = new Array();
-var Num_nodes = readline.question("How many nodes:");
+var Num_nodes = readline.question("How many nodes :");
 for(var l=0; l<Num_nodes; l++)
 {
-   NodeArray[l] = readline.question("Node Address");
-   //port= NodeArray[l].split(':')[1];
-   //console.log(port);   
+   nId  = readline.question("Node Id : ");
+   addNode(nId);   
 }
 
 
@@ -51,16 +52,6 @@ for(var l=0; l<Num_nodes; l++)
 // }
 
 
-function addNode()
-{
-    
-}
-
-function deleteNode(j)
-{
-    NodeArray.splice(j,1);
-    i--;
-}
 
 async function exposeSelfData()
 {
@@ -80,7 +71,6 @@ async function exposeSelfData()
       nodes[NodeArray[node]]=JSON.parse(res.getBody());
     }
     metadata.nodes= nodes;
-    //console.log(metadata);
     var Metadata= JSON.stringify(metadata);
     return Metadata;
 }
@@ -106,7 +96,6 @@ async function getInfo()
     }
    }
    clusterInfo.nodes=node;
-   //console.log(clusterInfo);
    return JSON.stringify(clusterInfo);
 }
 
@@ -140,7 +129,23 @@ function getJsonData()
     //console.log(jData);
     return jData;
 }
+async function addNode(nId){
+  query= {node_id:nId};
+  find_result= Node.findOne(query,{ip:1,port:1});
+  result= await find_result.exec();
+  NodeArray.push(result.ip+':'+result.port);
+  return JSON.stringify("Node has been Added");
+  
+}
 
+async function deleteNode(nId){
+  query= {node_id:nId};
+  find_result= Node.findOne(query,{ip:1,port:1});
+  result= await find_result.exec();
+  NodeArray.splice(NodeArray.indexOf(result.ip+':'+result.port),1);
+  return JSON.stringify("Node has been deleted");
+
+}
 
 async function startServer(Iport, Host)
 {
@@ -163,11 +168,17 @@ http.createServer(async function (req, res) {
     res.write(await getInfo());
     res.end();
   }
-  else if(req.url=='/addNode'){
-    addNode();  
+  var q = url2.parse(req.url, true);
+  if(q.pathname=='/addNode')
+  {
+    res.write(await addNode(q.query.node_id));
+    res.end();
+    
   }
-  else if(req.url=='/deleteNode'){
-    deleteNode();  
+  else if(q.pathname=='/deleteNode')
+  {
+    res.write(await deleteNode(q.query.node_id));
+    res.end();
   }
   else{
   res.writeHead(200, {'Content-Type': 'application/json'});
