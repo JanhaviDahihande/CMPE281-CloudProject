@@ -191,6 +191,7 @@ async function run()
 {
     cData= await findClusterData(cluster_id);
     console.log(cData);
+    console.log(cData.ipAddr.split(':')[1]);
     startServer(cData.ipAddr.split(':')[1],cData.ipAddr.split(':')[0]);
 }
 
