@@ -480,7 +480,7 @@ app.post("/api/manageinfrastruture/node/add", (req, res, next) => {
 app.put("/api/manageinfrastruture/node/update", (req, res, next) => {
   const { cluster_id, node_id, latitude, longitude } = req.body;
 
-  var query = { cluster_id: cluster_id , node_id: node_id};
+  var query = { cluster_id: cluster_id, node_id: node_id };
   find_result = Node.updateOne(query, {
     $set: { latitude: latitude, longitude: longitude }
   });
@@ -543,18 +543,18 @@ app.post("/api/manageinfrastruture/sensor/add", (req, res) => {
   newSensor.node_id = node_id;
   newSensor.sensor_type = sensor_type;
   newSensor.status = sensor_status;
-newSensor.save((err, user) => {
-  if (err) {
+  newSensor.save((err, user) => {
+    if (err) {
+      return res.send({
+        success: false,
+        message: "Error: Server error"
+      });
+    }
     return res.send({
-      success: false,
-      message: "Error: Server error"
+      success: true,
+      message: "New Sensor added"
     });
-  }
-  return res.send({
-    success: true,
-    message: "New Sensor added"
   });
-});
 });
 
 app.put("/api/manageinfrastruture/sensor/update", (req, res, next) => {
@@ -603,7 +603,7 @@ app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
 //   const { user_name, zipcode} = req.body;
 //   var query = {};
 //     if(user_name!=null)
-//     { 
+//     {
 //         user_find= User.find({name:user_name},{_id:1});
 //         user_op= await user_find.exec();
 //         var uid=user_op[0]['_id'].toString();
@@ -621,7 +621,7 @@ app.get("/api/manageinfrastruture/sensor/view", (req, res, next) => {
 //         else{
 //         query['cluster_id']= cluster_op2['cluster_id'];
 //         }
-        
+
 //     }
 //     if(zipcode!=null){
 //         cluster_find2= Cluster.find({areaCode:zipcode},{cluster_id:1, _id:0});
@@ -667,14 +667,14 @@ app.get("/api/users/:user_name/zip/:zipcode", async (req, res, next) => {
   let zipcode = req.params.zipcode;
 
   console.log(user_name + "_" + zipcode);
-  user_find= User.find({name:user_name},{_id:1});
-  user_op= await user_find.exec();
-  var uid=user_op[0]['_id'].toString();
-  
-  var query = { user_id: uid , areaCode: zipcode};
+  user_find = User.find({ name: user_name }, { _id: 1 });
+  user_op = await user_find.exec();
+  var uid = user_op[0]["_id"].toString();
+
+  var query = { user_id: uid, areaCode: zipcode };
   console.log(query);
-  find_result= Cluster.find(query, {cluster_name:1, _id:0});
-  result= find_result.exec();
+  find_result = Cluster.find(query, { cluster_name: 1, _id: 0 });
+  result = find_result.exec();
 
   result.then(function(data) {
     // console.log(data);
@@ -688,14 +688,17 @@ app.get("/api/users/:user_name/zip/:zipcode", async (req, res, next) => {
 app.get("/api/cluster/:cluster_name", async (req, res, next) => {
   let cluster_name = req.params.cluster_name;
 
-  cluster_find= Cluster.find({cluster_name:cluster_name},{cluster_id:1,_id:0});
-  cluster_op= await cluster_find.exec();
-  var Cl_id=cluster_op[0]['cluster_id'].toString();
-  
-  var query = { cluster_id: Cl_id};
+  cluster_find = Cluster.find(
+    { cluster_name: cluster_name },
+    { cluster_id: 1, _id: 0 }
+  );
+  cluster_op = await cluster_find.exec();
+  var Cl_id = cluster_op[0]["cluster_id"].toString();
+
+  var query = { cluster_id: Cl_id };
   console.log(query);
-  find_result= Node.find(query);
-  result= find_result.exec();
+  find_result = Node.find(query);
+  result = find_result.exec();
 
   result.then(function(data) {
     // console.log(data);
@@ -733,7 +736,7 @@ app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
   // find_result = SensorStatus.find();
   // result = find_result.exec();
 
-  SensorStatus.find().exec(function(err, result){
+  SensorStatus.find().exec(function(err, result) {
     if (err) throw err;
     console.log("Result: " + result);
     return res.send({
@@ -741,7 +744,17 @@ app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
       message: JSON.stringify(result)
     });
   });
+});
 
+app.delete("/api/user/delete", (req, res, next) => {
+  const { user_id } = req.body;
+  var query = { user_id: user_id };
+  find_result = User.deleteOne(query, err => {
+    if (err) return res.send(err);
+    return res.json({ success: true });
+  });
+  result = find_result.exec();
+  return result;
 });
 
 // append /api for our http requestsf
