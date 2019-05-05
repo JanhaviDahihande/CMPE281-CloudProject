@@ -211,7 +211,7 @@ app.post("/api/account/signin", (req, res, next) => {
 
       // Otherwise correct user
       const userSession = new UserSession();
-      userSession.userId = user._id;
+      userSession.userId = user.user_id;
 
       userSession.save((err, doc) => {
         if (err) {
