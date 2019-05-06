@@ -31,7 +31,6 @@ db.on("error", console.error.bind(console, "MongoDB connection error:"));
 
 function fetch(Address)
 {
-  console.log(Address);
     url= 'http://'+Address+'/getAllData'
     var res = request('GET', url);
     var result = JSON.parse(res.getBody());
@@ -205,7 +204,7 @@ http.createServer(async function (req, res) {
 }).listen(8070, "localhost");
 }
 
-startServer(8070);
+startServer(8070, "localhost");
 
 function run() {
     setInterval(getJsonData, 5000);
