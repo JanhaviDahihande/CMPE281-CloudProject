@@ -709,27 +709,38 @@ app.get("/api/cluster/:cluster_name", async (req, res, next) => {
   });
 });
 
-app.get("/api/dataview/sensor/:node_id", (req, res, next) => {
-  let id = req.params.node_id;
-  // console.log("id: " + id.toString());
-  var query = { node_id: id.toString() };
-  find_result = SensorData.find(query);
-  result = find_result.exec();
-  // sleep(10000).then(() => {
-  //   console.log(result);
-  //   return res.send({
-  //     success: true,
-  //     message: JSON.stringify(result)
-  //   });
-  // });
-  result.then(function(data) {
-    // console.log(data);
-    return res.send({
-      success: true,
-      message: JSON.stringify(data)
+app.get(
+  "/api/dataview/sensor/:node_id/:start_date/:end_date",
+  (req, res, next) => {
+    let id = req.params.node_id;
+    let start_date = req.params.start_date;
+    let end_date = req.params.end_date;
+    // console.log("id: " + id.toString());
+    var query = { node_id: id.toString() };
+
+    gt_query = {};
+    gt_query["$gte"] = start_date;
+    gt_query["$lt"] = end_date;
+    query.createdAt = gt_query;
+
+    find_result = SensorData.find(query).sort({ createdAt: -1 });
+    result = find_result.exec();
+    // sleep(10000).then(() => {
+    //   console.log(result);
+    //   return res.send({
+    //     success: true,
+    //     message: JSON.stringify(result)
+    //   });
+    // });
+    result.then(function(data) {
+      // console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
     });
-  });
-});
+  }
+);
 
 app.get("/api/manageinfrastruture/sensorstatus/view", (req, res, next) => {
   console.log("Here");
