@@ -56,7 +56,7 @@ for(var l=0; l<Num_nodes; l++)
 async function exposeSelfData()
 {
     var data= await findClusterData(cluster_id);
-   // console.log(data);
+    console.log(data);
     var metadata= new Object();
     metadata.cluster_id= data.cluster_id;
     metadata.Address= data.ipAddr;

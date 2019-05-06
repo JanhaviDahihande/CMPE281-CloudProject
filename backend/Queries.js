@@ -124,9 +124,20 @@ async function findAllUsers()
     return result;
 }
 
-async function dataViewQuery(user_name,zipcode, cluster_name, node_id, sensor_type)
+async function dataViewQuery(start_date,end_date,user_name,zipcode, cluster_name, node_id, sensor_type)
 { 
     var query = {};
+    if(start_date!=null && end_date!=null)
+    {
+        gt_query={}
+        gt_query['$gte']=start_date;
+        gt_query['$lt']=end_date;
+        query.createdAt=gt_query;
+    }
+    // if(end_date!=null)
+    // {
+    //    query['created_at']='{$lte:new ISODate('+end_date+')}';
+    // }
     if(user_name!=null)
     { 
         user_find= User.find({name:user_name},{_id:1});
@@ -210,10 +221,10 @@ async function testQueries()
 {
 //daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     //daa = await findUserForRequests("5cbd62b6a090d8249f70a016");
- //   daa = await dataViewQuery("Akshay",null, null, null , 'airflow');
+    daa = await dataViewQuery("2019-05-02", "2019-05-04", "Akshay" , "422002", null, null , 'airflow');
 // daa = await getSensorDatafromNodeid("2");
-// console.log(daa);
-await getTheData();
+    console.log(daa);
+//await getTheData();
 }
 
 
