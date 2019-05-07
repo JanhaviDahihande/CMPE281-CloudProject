@@ -768,6 +768,23 @@ app.delete("/api/user/delete", (req, res, next) => {
   return result;
 });
 
+app.get("/api/infrastructure/getdetails", async (req, res, next) => {
+  console.log("in api call");
+  cMetadata = new Object();
+  nodes = Node.countDocuments();
+  nCount = await nodes.exec();
+  cMetadata.nodes = nCount;
+  clusters = Cluster.countDocuments();
+  cCount = await clusters.exec();
+  cMetadata.clusters = cCount;
+  users = User.find({ role: "user" }).countDocuments();
+  uCount = await users.exec();
+  cMetadata.users = uCount;
+  cMetadata.sensors = nCount * 4;
+  console.log(cMetadata);
+  return cMetadata;
+});
+
 // append /api for our http requestsf
 //change1
 // app.use("/api", router);
