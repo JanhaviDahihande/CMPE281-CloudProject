@@ -12,7 +12,10 @@ const bcrypt = require('bcrypt');
 var ClusterArray = new Array();
 var Num_Clusters = readline.question("How many Clusters:");
 for(var l=0; l<Num_Clusters; l++)
-{ClusterArray[l] = readline.question("Cluster Address: ");}
+{
+  cId = readline.question("Cluster Id: ");
+  addCluster(cId);
+}
     
 const dbRoute = "mongodb+srv://dbUser:Qwerty@123@cluster0-auqrg.mongodb.net/mydb";
 

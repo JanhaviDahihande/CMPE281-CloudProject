@@ -39,6 +39,35 @@ async function getSensorDatabetDate(from,to)
     return result;
 }
 
+
+async function getActiveNodes(userId)
+{
+    var query={};
+    var query_i = { user_id: userId};
+    console.log(query_i);
+    find_result= Cluster.find(query_i,{_id:0, cluster_id:1});
+    result= await find_result.exec();
+    console.log(result);
+    var size = Object.keys(result).length;
+        if(size>1){
+            var or_query=[];
+            for(item in result)
+            {
+                or_query.push(result[item]);
+            }
+            console.log(or_query);
+            query['$or']= or_query;
+        }
+        else{
+        query['cluster_id']= result[0]['cluster_id'];
+        } 
+    query['status']=true;
+    find_result2= Node.find(query,{_id:0, node_id:1});
+    result2= await find_result2.exec();
+    return result2;
+}
+
+
 async function getSensorDatafromNodeid(node_id)
 {
     var query = { node_id: node_id };
@@ -63,6 +92,7 @@ async function getCount()
     cMetadata.users=uCount;
     cMetadata.sensors=nCount*4;
     console.log(cMetadata);
+    return cMetadata
 }
 
 
@@ -243,7 +273,9 @@ async function testQueries()
 // daa = await getSensorDatafromNodeid("2");
     //console.log(daa);
 //await getTheData();
-await getCount();
+daa =await getActiveNodes("2");
+//await getCount();
+console.log(daa);
 }
 
 
