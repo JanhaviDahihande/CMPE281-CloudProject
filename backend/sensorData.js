@@ -27,7 +27,7 @@ function generateTempData(){
     return tempData;
 }
 function generatePHData(){
-    phData =((Math.random() * 2) + 6);
+    phData =((Math.random() * 1) + 6.25);
     return parseFloat(phData).toFixed(2);
     
 }

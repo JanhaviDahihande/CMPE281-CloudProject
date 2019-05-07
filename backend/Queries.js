@@ -49,6 +49,24 @@ async function getSensorDatafromNodeid(node_id)
 }
 
 
+async function getCount()
+{
+    cMetadata= new Object();
+    nodes= Node.countDocuments();
+    nCount= await nodes.exec();
+    cMetadata.nodes=nCount;
+    clusters= Cluster.countDocuments();
+    cCount= await clusters.exec();
+    cMetadata.clusters=cCount;
+    users= User.find({role:"user"}).countDocuments();
+    uCount= await users.exec();
+    cMetadata.users=uCount;
+    cMetadata.sensors=nCount*4;
+    console.log(cMetadata);
+}
+
+
+
 async function listClusternames(user_name, zipcode)
 {
     user_find= User.find({name:user_name},{_id:1});
@@ -221,10 +239,11 @@ async function testQueries()
 {
 //daa = await updateRequests('5cbe50f48f51ce3117d4311d',"pending");
     //daa = await findUserForRequests("5cbd62b6a090d8249f70a016");
-    daa = await dataViewQuery("2019-05-02", "2019-05-04", "Akshay" , "422002", null, null , 'airflow');
+   // daa = await dataViewQuery("2019-05-02", "2019-05-04", "Akshay" , "422002", null, null , 'airflow');
 // daa = await getSensorDatafromNodeid("2");
-    console.log(daa);
+    //console.log(daa);
 //await getTheData();
+await getCount();
 }
 
 
