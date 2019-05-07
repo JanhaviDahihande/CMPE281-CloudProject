@@ -667,9 +667,9 @@ app.get("/api/users/:user_name/zip/:zipcode", async (req, res, next) => {
   let zipcode = req.params.zipcode;
 
   console.log(user_name + "_" + zipcode);
-  user_find = User.find({ name: user_name }, { _id: 1 });
+  user_find = User.find({ name: user_name }, { user_id: 1 });
   user_op = await user_find.exec();
-  var uid = user_op[0]["_id"].toString();
+  var uid = user_op[0]["user_id"].toString();
 
   var query = { user_id: uid, areaCode: zipcode };
   console.log(query);
@@ -768,48 +768,49 @@ app.delete("/api/user/delete", (req, res, next) => {
   return result;
 });
 
-app.get("/api/infrastructure/getdetails/registeredfarmers", async (req, res, next) => {
+app.get(
+  "/api/infrastructure/getdetails/registeredfarmers",
+  async (req, res, next) => {
+    users = User.find({ role: "user" }).countDocuments();
+    uCount = users.exec();
 
-  
-  users = User.find({ role: "user" }).countDocuments();
-  uCount = users.exec();
+    // cMetadata['sensors'] = nCount * 4;
 
-
- // cMetadata['sensors'] = nCount * 4;
-
-  uCount.then(function(data) {
-    // console.log(data);
-    return res.send({
-      success: true,
-      message: JSON.stringify(data)
+    uCount.then(function(data) {
+      // console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
     });
-  });
-});
+  }
+);
 
-app.get("/api/infrastructure/getdetails/totalclusters", async (req, res, next) => {
-  
-  clusters = Cluster.countDocuments();
-  cCount = clusters.exec();
+app.get(
+  "/api/infrastructure/getdetails/totalclusters",
+  async (req, res, next) => {
+    clusters = Cluster.countDocuments();
+    cCount = clusters.exec();
 
- // cMetadata['sensors'] = nCount * 4;
+    // cMetadata['sensors'] = nCount * 4;
 
- cCount.then(function(data) {
-    // console.log(data);
-    return res.send({
-      success: true,
-      message: JSON.stringify(data)
+    cCount.then(function(data) {
+      // console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
     });
-  });
-});
+  }
+);
 
 app.get("/api/infrastructure/getdetails/totalnodes", async (req, res, next) => {
-
   nodes = Node.countDocuments();
   nCount = nodes.exec();
 
- // cMetadata['sensors'] = nCount * 4;
+  // cMetadata['sensors'] = nCount * 4;
 
- nCount.then(function(data) {
+  nCount.then(function(data) {
     // console.log(data);
     return res.send({
       success: true,
@@ -818,77 +819,85 @@ app.get("/api/infrastructure/getdetails/totalnodes", async (req, res, next) => {
   });
 });
 
-app.get("/api/infrastructure/getdetails/totalsensors", async (req, res, next) => {
+app.get(
+  "/api/infrastructure/getdetails/totalsensors",
+  async (req, res, next) => {
+    sensors = SensorData.countDocuments();
+    sCount = sensors.exec();
 
-  sensors = SensorData.countDocuments();
-  sCount = sensors.exec();
+    // cMetadata['sensors'] = nCount * 4;
 
- // cMetadata['sensors'] = nCount * 4;
-
- sCount.then(function(data) {
-    // console.log(data);
-    return res.send({
-      success: true,
-      message: JSON.stringify(data)
+    sCount.then(function(data) {
+      // console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
     });
-  });
-});
+  }
+);
 
-app.get("/api/infrastructure/getdetails/user/totalnodes/:user_id", async (req, res, next) => {
-  console.log("Here");
-  let userId  = req.params.user_id;
-  console.log(userId);
-  var query={};
-    var query_i = { user_id: userId};
+app.get(
+  "/api/infrastructure/getdetails/user/totalnodes/:user_id",
+  async (req, res, next) => {
+    console.log("Here");
+    let userId = req.params.user_id;
+    console.log(userId);
+    var query = {};
+    var query_i = { user_id: userId };
     console.log(query_i);
-    find_result= Cluster.find(query_i,{_id:0, cluster_id:1});
-    result= await find_result.exec();
+    find_result = Cluster.find(query_i, { _id: 0, cluster_id: 1 });
+    result = await find_result.exec();
     console.log(result);
     var size = Object.keys(result).length;
-        if(size>1){
-            var or_query=[];
-            for(item in result)
-            {
-                or_query.push(result[item]);
-            }
-            console.log(or_query);
-            query['$or']= or_query;
-        }
-        else{
-        query['cluster_id']= result[0]['cluster_id'];
-        } 
-    query['status']=true;
-    find_result2= Node.find(query,{_id:0, node_id:1}).countDocuments();
-    result2= find_result2.exec();
+    if (size > 1) {
+      var or_query = [];
+      for (item in result) {
+        or_query.push(result[item]);
+      }
+      // console.log(or_query);
+      query["$or"] = or_query;
+    } else {
+      query["cluster_id"] = result[0]["cluster_id"];
+    }
+    query["status"] = true;
+    find_result2 = Node.find(query, { _id: 0, node_id: 1 }).countDocuments();
+    result2 = find_result2.exec();
 
     result2.then(function(data) {
-    // console.log(data);
-    return res.send({
-      success: true,
-      message: JSON.stringify(data)
+      // console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
     });
-  });
-});
+  }
+);
 
-app.get("/api/infrastructure/getdetails/user/totalclusters/:user_id", async (req, res, next) => {
-  console.log("Here");
-  let userId  = req.params.user_id;
-  console.log(userId);
-  var query={};
-    var query_i = { user_id: userId};
+app.get(
+  "/api/infrastructure/getdetails/user/totalclusters/:user_id",
+  async (req, res, next) => {
+    console.log("Here");
+    let userId = req.params.user_id;
+    console.log(userId);
+    var query = {};
+    var query_i = { user_id: userId };
     console.log(query_i);
-    find_result= Cluster.find(query_i,{_id:0, cluster_id:1}).countDocuments();
-    result= find_result.exec();
-    
+    find_result = Cluster.find(query_i, {
+      _id: 0,
+      cluster_id: 1
+    }).countDocuments();
+    result = find_result.exec();
 
     result.then(function(data) {
-    // console.log(data);
-    return res.send({
-      success: true,
-      message: JSON.stringify(data)
+      // console.log(data);
+      return res.send({
+        success: true,
+        message: JSON.stringify(data)
+      });
     });
-  });
-});
+  }
+);
 
 // append /api for our http requestsf
 //change1
